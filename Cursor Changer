@@ -1,0 +1,388 @@
+--// YN Cursor Hub ULTIMATE 🎯
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "YN_CURSOR_HUB"
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Parent = game.CoreGui
+
+-- MAIN FRAME
+local main = Instance.new("Frame")
+main.Parent = gui
+main.Size = UDim2.new(0,290,0,280)
+main.Position = UDim2.new(0.5,-145,0.5,-140)
+main.BackgroundColor3 = Color3.fromRGB(20,20,20)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+
+Instance.new("UICorner",main).CornerRadius = UDim.new(0,18)
+
+local stroke = Instance.new("UIStroke")
+stroke.Parent = main
+stroke.Color = Color3.fromRGB(0,255,170)
+stroke.Thickness = 2
+
+local gradient = Instance.new("UIGradient")
+gradient.Parent = main
+gradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0,Color3.fromRGB(35,35,35)),
+	ColorSequenceKeypoint.new(1,Color3.fromRGB(15,15,15))
+}
+
+-- SHADOW
+local shadow = Instance.new("ImageLabel")
+shadow.Parent = main
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageTransparency = 0.5
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10,10,118,118)
+shadow.Size = UDim2.new(1,30,1,30)
+shadow.Position = UDim2.new(0,-15,0,-15)
+shadow.ZIndex = 0
+
+-- TITLE
+local title = Instance.new("TextLabel")
+title.Parent = main
+title.Size = UDim2.new(1,-60,0,45)
+title.Position = UDim2.new(0,10,0,0)
+title.BackgroundTransparency = 1
+title.Text = "YN Cursor Hub 🎯"
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 23
+title.TextColor3 = Color3.new(1,1,1)
+
+-- TEXTBOX FUNCTION
+local function createBox(y,text,default)
+
+	local box = Instance.new("TextBox")
+	box.Parent = main
+	box.Size = UDim2.new(0,240,0,38)
+	box.Position = UDim2.new(0.5,-120,0,y)
+	box.PlaceholderText = text
+	box.Text = default or ""
+	box.Font = Enum.Font.GothamSemibold
+	box.TextSize = 16
+	box.TextColor3 = Color3.new(1,1,1)
+	box.BackgroundColor3 = Color3.fromRGB(35,35,35)
+	box.BorderSizePixel = 0
+
+	Instance.new("UICorner",box).CornerRadius = UDim.new(0,12)
+
+	local s = Instance.new("UIStroke")
+	s.Parent = box
+	s.Color = Color3.fromRGB(70,70,70)
+
+	box.Focused:Connect(function()
+
+		TweenService:Create(
+			s,
+			TweenInfo.new(0.2),
+			{Color = Color3.fromRGB(0,255,170)}
+		):Play()
+
+	end)
+
+	box.FocusLost:Connect(function()
+
+		TweenService:Create(
+			s,
+			TweenInfo.new(0.2),
+			{Color = Color3.fromRGB(70,70,70)}
+		):Play()
+
+	end)
+
+	return box
+end
+
+local imageBox = createBox(55,"Image ID","")
+local sizeBox = createBox(105,"Cursor Size","50")
+local posBox = createBox(155,"Move Up Amount","0")
+
+-- BUTTON FUNCTION
+local function createButton(text,x,color)
+
+	local btn = Instance.new("TextButton")
+	btn.Parent = main
+	btn.Size = UDim2.new(0,110,0,42)
+	btn.Position = UDim2.new(0,x,0,215)
+	btn.Text = text
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 18
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.BackgroundColor3 = color
+	btn.BorderSizePixel = 0
+	btn.AutoButtonColor = false
+
+	Instance.new("UICorner",btn).CornerRadius = UDim.new(0,14)
+
+	btn.MouseEnter:Connect(function()
+
+		TweenService:Create(
+			btn,
+			TweenInfo.new(0.15),
+			{Size = UDim2.new(0,115,0,45)}
+		):Play()
+
+	end)
+
+	btn.MouseLeave:Connect(function()
+
+		TweenService:Create(
+			btn,
+			TweenInfo.new(0.15),
+			{Size = UDim2.new(0,110,0,42)}
+		):Play()
+
+	end)
+
+	return btn
+end
+
+local loadBtn = createButton("Load",20,Color3.fromRGB(0,170,255))
+local toggleBtn = createButton("OFF",160,Color3.fromRGB(255,70,70))
+
+-- CURSOR
+local cursor = Instance.new("ImageLabel")
+cursor.Parent = gui
+cursor.BackgroundTransparency = 1
+cursor.Size = UDim2.new(0,50,0,50)
+cursor.Visible = false
+cursor.ZIndex = 999999
+
+local enabled = false
+
+-- LOAD SETTINGS
+loadBtn.MouseButton1Click:Connect(function()
+
+	local id = imageBox.Text:gsub("%D","")
+
+	if id ~= "" then
+		cursor.Image = "rbxthumb://type=Asset&id="..id.."&w=420&h=420"
+	end
+
+	local size = tonumber(sizeBox.Text)
+
+	if size then
+		cursor.Size = UDim2.new(0,size,0,size)
+	end
+
+	TweenService:Create(
+		loadBtn,
+		TweenInfo.new(0.1),
+		{Rotation = 5}
+	):Play()
+
+	task.wait(0.1)
+
+	TweenService:Create(
+		loadBtn,
+		TweenInfo.new(0.1),
+		{Rotation = 0}
+	):Play()
+
+end)
+
+-- TOGGLE
+local function update()
+
+	if enabled then
+
+		toggleBtn.Text = "ON"
+
+		TweenService:Create(
+			toggleBtn,
+			TweenInfo.new(0.2),
+			{BackgroundColor3 = Color3.fromRGB(0,220,120)}
+		):Play()
+
+	else
+
+		toggleBtn.Text = "OFF"
+
+		TweenService:Create(
+			toggleBtn,
+			TweenInfo.new(0.2),
+			{BackgroundColor3 = Color3.fromRGB(255,70,70)}
+		):Play()
+
+	end
+end
+
+update()
+
+toggleBtn.MouseButton1Click:Connect(function()
+
+	enabled = not enabled
+	cursor.Visible = enabled
+	update()
+
+end)
+
+UIS.MouseIconEnabled = false
+
+-- CURSOR FOLLOW
+RunService.RenderStepped:Connect(function()
+
+	if enabled then
+
+		local size = cursor.AbsoluteSize.X
+		local center = size / 2
+		local up = tonumber(posBox.Text) or 0
+
+		if UIS.MouseBehavior == Enum.MouseBehavior.LockCenter then
+
+			cursor.Position = UDim2.new(
+				0.5,
+				-center,
+				0.5,
+				-center - up
+			)
+
+		else
+
+			cursor.Position = UDim2.new(
+				0,
+				mouse.X - center,
+				0,
+				mouse.Y - center - up
+			)
+
+		end
+	end
+end)
+
+-- SMALL MINIMIZE BUTTON
+local mini = Instance.new("TextButton")
+mini.Parent = main
+mini.Size = UDim2.new(0,20,0,20)
+mini.Position = UDim2.new(1,-50,0,12)
+mini.Text = "-"
+mini.Font = Enum.Font.GothamBlack
+mini.TextSize = 14
+mini.TextColor3 = Color3.new(1,1,1)
+mini.BackgroundColor3 = Color3.fromRGB(70,70,70)
+mini.BorderSizePixel = 0
+
+Instance.new("UICorner",mini).CornerRadius = UDim.new(1,0)
+
+-- SMALL CLOSE BUTTON
+local close = Instance.new("TextButton")
+close.Parent = main
+close.Size = UDim2.new(0,20,0,20)
+close.Position = UDim2.new(1,-25,0,12)
+close.Text = "×"
+close.Font = Enum.Font.GothamBlack
+close.TextSize = 14
+close.TextColor3 = Color3.new(1,1,1)
+close.BackgroundColor3 = Color3.fromRGB(255,70,70)
+close.BorderSizePixel = 0
+
+Instance.new("UICorner",close).CornerRadius = UDim.new(1,0)
+
+-- MINI ICON
+local miniIcon = Instance.new("TextButton")
+miniIcon.Parent = gui
+miniIcon.Size = UDim2.new(0,55,0,55)
+miniIcon.Position = UDim2.new(0.5,-27,0.5,-27)
+miniIcon.Text = "🎯"
+miniIcon.Font = Enum.Font.GothamBlack
+miniIcon.TextSize = 28
+miniIcon.Visible = false
+miniIcon.BackgroundColor3 = Color3.fromRGB(20,20,20)
+miniIcon.TextColor3 = Color3.new(1,1,1)
+miniIcon.BorderSizePixel = 0
+miniIcon.Active = true
+miniIcon.Draggable = true
+
+Instance.new("UICorner",miniIcon).CornerRadius = UDim.new(1,0)
+
+-- GLOW
+local glow = Instance.new("UIStroke")
+glow.Parent = miniIcon
+glow.Color = Color3.fromRGB(0,255,170)
+glow.Thickness = 4
+
+task.spawn(function()
+
+	while miniIcon.Parent do
+
+		TweenService:Create(
+			glow,
+			TweenInfo.new(1),
+			{
+				Thickness = 8
+			}
+		):Play()
+
+		task.wait(1)
+
+		TweenService:Create(
+			glow,
+			TweenInfo.new(1),
+			{
+				Thickness = 4
+			}
+		):Play()
+
+		task.wait(1)
+
+	end
+end)
+
+-- MINIMIZE
+mini.MouseButton1Click:Connect(function()
+
+	main.Visible = false
+	miniIcon.Visible = true
+
+end)
+
+-- OPEN GUI
+miniIcon.MouseButton1Click:Connect(function()
+
+	miniIcon.Visible = false
+	main.Visible = true
+
+	main.Size = UDim2.new(0,0,0,0)
+
+	TweenService:Create(
+		main,
+		TweenInfo.new(0.25,Enum.EasingStyle.Back),
+		{
+			Size = UDim2.new(0,290,0,280)
+		}
+	):Play()
+
+end)
+
+-- CLOSE GUI
+close.MouseButton1Click:Connect(function()
+
+	UIS.MouseIconEnabled = true
+
+	TweenService:Create(
+		main,
+		TweenInfo.new(0.2),
+		{
+			Size = UDim2.new(0,0,0,0)
+		}
+	):Play()
+
+	task.wait(0.2)
+
+	gui:Destroy()
+
+end)
