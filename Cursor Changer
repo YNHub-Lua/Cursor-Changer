@@ -1,23 +1,109 @@
---// YN Cursor Hub ULTIMATE 🎯
+--// YN Cursor Hub KEY SYSTEM 🎯
 
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local SetClipboard = setclipboard or toclipboard or set_clipboard
 
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
+
+-- SETTINGS
+local KEY = "YNHUB2026"
+local DISCORD = "https://discord.gg/KE3DPtYdR"
 
 -- GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "YN_CURSOR_HUB"
 gui.ResetOnSpawn = false
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = game.CoreGui
 
--- MAIN FRAME
+-- KEY FRAME
+local keyFrame = Instance.new("Frame")
+keyFrame.Parent = gui
+keyFrame.Size = UDim2.new(0,300,0,180)
+keyFrame.Position = UDim2.new(0.5,-150,0.5,-90)
+keyFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+keyFrame.BorderSizePixel = 0
+
+Instance.new("UICorner",keyFrame).CornerRadius = UDim.new(0,18)
+
+local keyStroke = Instance.new("UIStroke")
+keyStroke.Parent = keyFrame
+keyStroke.Color = Color3.fromRGB(0,255,170)
+keyStroke.Thickness = 2
+
+local keyTitle = Instance.new("TextLabel")
+keyTitle.Parent = keyFrame
+keyTitle.Size = UDim2.new(1,0,0,45)
+keyTitle.BackgroundTransparency = 1
+keyTitle.Text = "YN HUB KEY SYSTEM 🎯"
+keyTitle.Font = Enum.Font.GothamBlack
+keyTitle.TextSize = 23
+keyTitle.TextColor3 = Color3.new(1,1,1)
+
+-- KEY BOX
+local keyBox = Instance.new("TextBox")
+keyBox.Parent = keyFrame
+keyBox.Size = UDim2.new(0,240,0,40)
+keyBox.Position = UDim2.new(0.5,-120,0,60)
+keyBox.PlaceholderText = "Enter Key"
+keyBox.Text = ""
+keyBox.Font = Enum.Font.GothamSemibold
+keyBox.TextSize = 17
+keyBox.TextColor3 = Color3.new(1,1,1)
+keyBox.BackgroundColor3 = Color3.fromRGB(35,35,35)
+keyBox.BorderSizePixel = 0
+
+Instance.new("UICorner",keyBox).CornerRadius = UDim.new(0,12)
+
+-- COPY BUTTON
+local copyBtn = Instance.new("TextButton")
+copyBtn.Parent = keyFrame
+copyBtn.Size = UDim2.new(0,110,0,38)
+copyBtn.Position = UDim2.new(0,25,0,120)
+copyBtn.Text = "Copy Link"
+copyBtn.Font = Enum.Font.GothamBold
+copyBtn.TextSize = 17
+copyBtn.TextColor3 = Color3.new(1,1,1)
+copyBtn.BackgroundColor3 = Color3.fromRGB(0,170,255)
+copyBtn.BorderSizePixel = 0
+
+Instance.new("UICorner",copyBtn).CornerRadius = UDim.new(0,12)
+
+-- CHECK BUTTON
+local checkBtn = Instance.new("TextButton")
+checkBtn.Parent = keyFrame
+checkBtn.Size = UDim2.new(0,110,0,38)
+checkBtn.Position = UDim2.new(1,-135,0,120)
+checkBtn.Text = "Check Key"
+checkBtn.Font = Enum.Font.GothamBold
+checkBtn.TextSize = 17
+checkBtn.TextColor3 = Color3.new(1,1,1)
+checkBtn.BackgroundColor3 = Color3.fromRGB(0,220,120)
+checkBtn.BorderSizePixel = 0
+
+Instance.new("UICorner",checkBtn).CornerRadius = UDim.new(0,12)
+
+copyBtn.MouseButton1Click:Connect(function()
+
+	if SetClipboard then
+		SetClipboard(DISCORD)
+	end
+
+	copyBtn.Text = "Copied!"
+
+	task.wait(1)
+
+	copyBtn.Text = "Copy Link"
+
+end)
+
+-- MAIN GUI
 local main = Instance.new("Frame")
 main.Parent = gui
+main.Visible = false
 main.Size = UDim2.new(0,290,0,280)
 main.Position = UDim2.new(0.5,-145,0.5,-140)
 main.BackgroundColor3 = Color3.fromRGB(20,20,20)
@@ -32,26 +118,6 @@ stroke.Parent = main
 stroke.Color = Color3.fromRGB(0,255,170)
 stroke.Thickness = 2
 
-local gradient = Instance.new("UIGradient")
-gradient.Parent = main
-gradient.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0,Color3.fromRGB(35,35,35)),
-	ColorSequenceKeypoint.new(1,Color3.fromRGB(15,15,15))
-}
-
--- SHADOW
-local shadow = Instance.new("ImageLabel")
-shadow.Parent = main
-shadow.BackgroundTransparency = 1
-shadow.Image = "rbxassetid://1316045217"
-shadow.ImageTransparency = 0.5
-shadow.ScaleType = Enum.ScaleType.Slice
-shadow.SliceCenter = Rect.new(10,10,118,118)
-shadow.Size = UDim2.new(1,30,1,30)
-shadow.Position = UDim2.new(0,-15,0,-15)
-shadow.ZIndex = 0
-
--- TITLE
 local title = Instance.new("TextLabel")
 title.Parent = main
 title.Size = UDim2.new(1,-60,0,45)
@@ -63,7 +129,7 @@ title.Font = Enum.Font.GothamBlack
 title.TextSize = 23
 title.TextColor3 = Color3.new(1,1,1)
 
--- TEXTBOX FUNCTION
+-- BOX FUNCTION
 local function createBox(y,text,default)
 
 	local box = Instance.new("TextBox")
@@ -79,30 +145,6 @@ local function createBox(y,text,default)
 	box.BorderSizePixel = 0
 
 	Instance.new("UICorner",box).CornerRadius = UDim.new(0,12)
-
-	local s = Instance.new("UIStroke")
-	s.Parent = box
-	s.Color = Color3.fromRGB(70,70,70)
-
-	box.Focused:Connect(function()
-
-		TweenService:Create(
-			s,
-			TweenInfo.new(0.2),
-			{Color = Color3.fromRGB(0,255,170)}
-		):Play()
-
-	end)
-
-	box.FocusLost:Connect(function()
-
-		TweenService:Create(
-			s,
-			TweenInfo.new(0.2),
-			{Color = Color3.fromRGB(70,70,70)}
-		):Play()
-
-	end)
 
 	return box
 end
@@ -124,29 +166,8 @@ local function createButton(text,x,color)
 	btn.TextColor3 = Color3.new(1,1,1)
 	btn.BackgroundColor3 = color
 	btn.BorderSizePixel = 0
-	btn.AutoButtonColor = false
 
 	Instance.new("UICorner",btn).CornerRadius = UDim.new(0,14)
-
-	btn.MouseEnter:Connect(function()
-
-		TweenService:Create(
-			btn,
-			TweenInfo.new(0.15),
-			{Size = UDim2.new(0,115,0,45)}
-		):Play()
-
-	end)
-
-	btn.MouseLeave:Connect(function()
-
-		TweenService:Create(
-			btn,
-			TweenInfo.new(0.15),
-			{Size = UDim2.new(0,110,0,42)}
-		):Play()
-
-	end)
 
 	return btn
 end
@@ -164,7 +185,7 @@ cursor.ZIndex = 999999
 
 local enabled = false
 
--- LOAD SETTINGS
+-- LOAD
 loadBtn.MouseButton1Click:Connect(function()
 
 	local id = imageBox.Text:gsub("%D","")
@@ -179,45 +200,17 @@ loadBtn.MouseButton1Click:Connect(function()
 		cursor.Size = UDim2.new(0,size,0,size)
 	end
 
-	TweenService:Create(
-		loadBtn,
-		TweenInfo.new(0.1),
-		{Rotation = 5}
-	):Play()
-
-	task.wait(0.1)
-
-	TweenService:Create(
-		loadBtn,
-		TweenInfo.new(0.1),
-		{Rotation = 0}
-	):Play()
-
 end)
 
 -- TOGGLE
 local function update()
 
 	if enabled then
-
 		toggleBtn.Text = "ON"
-
-		TweenService:Create(
-			toggleBtn,
-			TweenInfo.new(0.2),
-			{BackgroundColor3 = Color3.fromRGB(0,220,120)}
-		):Play()
-
+		toggleBtn.BackgroundColor3 = Color3.fromRGB(0,220,120)
 	else
-
 		toggleBtn.Text = "OFF"
-
-		TweenService:Create(
-			toggleBtn,
-			TweenInfo.new(0.2),
-			{BackgroundColor3 = Color3.fromRGB(255,70,70)}
-		):Play()
-
+		toggleBtn.BackgroundColor3 = Color3.fromRGB(255,70,70)
 	end
 end
 
@@ -233,38 +226,32 @@ end)
 
 UIS.MouseIconEnabled = false
 
--- CURSOR FOLLOW
+-- ONLY SHOW IN SHIFTLOCK
 RunService.RenderStepped:Connect(function()
 
-	if enabled then
+	if enabled and UIS.MouseBehavior == Enum.MouseBehavior.LockCenter then
+
+		cursor.Visible = true
 
 		local size = cursor.AbsoluteSize.X
 		local center = size / 2
 		local up = tonumber(posBox.Text) or 0
 
-		if UIS.MouseBehavior == Enum.MouseBehavior.LockCenter then
+		cursor.Position = UDim2.new(
+			0.5,
+			-center,
+			0.5,
+			-center - up
+		)
 
-			cursor.Position = UDim2.new(
-				0.5,
-				-center,
-				0.5,
-				-center - up
-			)
+	else
 
-		else
+		cursor.Visible = false
 
-			cursor.Position = UDim2.new(
-				0,
-				mouse.X - center,
-				0,
-				mouse.Y - center - up
-			)
-
-		end
 	end
 end)
 
--- SMALL MINIMIZE BUTTON
+-- MINI BUTTON
 local mini = Instance.new("TextButton")
 mini.Parent = main
 mini.Size = UDim2.new(0,20,0,20)
@@ -278,7 +265,7 @@ mini.BorderSizePixel = 0
 
 Instance.new("UICorner",mini).CornerRadius = UDim.new(1,0)
 
--- SMALL CLOSE BUTTON
+-- CLOSE BUTTON
 local close = Instance.new("TextButton")
 close.Parent = main
 close.Size = UDim2.new(0,20,0,20)
@@ -292,7 +279,7 @@ close.BorderSizePixel = 0
 
 Instance.new("UICorner",close).CornerRadius = UDim.new(1,0)
 
--- MINI ICON
+-- ICON
 local miniIcon = Instance.new("TextButton")
 miniIcon.Parent = gui
 miniIcon.Size = UDim2.new(0,55,0,55)
@@ -309,12 +296,12 @@ miniIcon.Draggable = true
 
 Instance.new("UICorner",miniIcon).CornerRadius = UDim.new(1,0)
 
--- GLOW
 local glow = Instance.new("UIStroke")
 glow.Parent = miniIcon
 glow.Color = Color3.fromRGB(0,255,170)
 glow.Thickness = 4
 
+-- GLOW LOOP
 task.spawn(function()
 
 	while miniIcon.Parent do
@@ -322,9 +309,7 @@ task.spawn(function()
 		TweenService:Create(
 			glow,
 			TweenInfo.new(1),
-			{
-				Thickness = 8
-			}
+			{Thickness = 8}
 		):Play()
 
 		task.wait(1)
@@ -332,9 +317,7 @@ task.spawn(function()
 		TweenService:Create(
 			glow,
 			TweenInfo.new(1),
-			{
-				Thickness = 4
-			}
+			{Thickness = 4}
 		):Play()
 
 		task.wait(1)
@@ -350,7 +333,7 @@ mini.MouseButton1Click:Connect(function()
 
 end)
 
--- OPEN GUI
+-- OPEN
 miniIcon.MouseButton1Click:Connect(function()
 
 	miniIcon.Visible = false
@@ -368,21 +351,29 @@ miniIcon.MouseButton1Click:Connect(function()
 
 end)
 
--- CLOSE GUI
+-- CLOSE (NO ANIMATION)
 close.MouseButton1Click:Connect(function()
 
 	UIS.MouseIconEnabled = true
-
-	TweenService:Create(
-		main,
-		TweenInfo.new(0.2),
-		{
-			Size = UDim2.new(0,0,0,0)
-		}
-	):Play()
-
-	task.wait(0.2)
-
 	gui:Destroy()
 
+end)
+
+-- KEY CHECK
+checkBtn.MouseButton1Click:Connect(function()
+
+	if keyBox.Text == KEY then
+
+		keyFrame:Destroy()
+		main.Visible = true
+
+	else
+
+		checkBtn.Text = "Wrong!"
+
+		task.wait(1)
+
+		checkBtn.Text = "Check Key"
+
+	end
 end)
