@@ -1,4 +1,4 @@
---// YN Cursor Hub FINAL 🎯
+--// YN Cursor Hub FINAL OPTIMIZED 🎯
 
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
@@ -27,7 +27,7 @@ local function playClick()
 	clickSound:Play()
 end
 
--- KEY FRAME
+-- KEY SYSTEM
 local keyFrame = Instance.new("Frame")
 keyFrame.Parent = gui
 keyFrame.Size = UDim2.new(0,300,0,180)
@@ -134,7 +134,7 @@ title.Font = Enum.Font.GothamBlack
 title.TextSize = 22
 title.TextColor3 = Color3.new(1,1,1)
 
--- TEXTBOX FUNCTION
+-- TEXTBOX CREATOR
 local function createBox(y,text,default)
 
 	local box = Instance.new("TextBox")
@@ -158,7 +158,7 @@ local imageBox = createBox(55,"Image ID","")
 local sizeBox = createBox(105,"Cursor Size","50")
 local posBox = createBox(155,"Move Up Amount","0")
 
--- BUTTONS
+-- BUTTON CREATOR
 local function createButton(text,x,color)
 
 	local btn = Instance.new("TextButton")
@@ -306,48 +306,53 @@ toggleBtn.MouseButton1Click:Connect(function()
 
 end)
 
-local spin = 0
+-- OPTIMIZED HIDE LOOP
+task.spawn(function()
 
-RunService.RenderStepped:Connect(function(dt)
+	while task.wait(1) do
 
-	-- HIDE CursorImage + CursorImageDefault + Shiftlock
-	pcall(function()
+		pcall(function()
 
-		UIS.MouseIconEnabled = false
+			UIS.MouseIconEnabled = false
 
-		local pg = player:FindFirstChild("PlayerGui")
+			local pg = player:FindFirstChild("PlayerGui")
 
-		if pg then
+			if pg then
 
-			for _,v in pairs(pg:GetDescendants()) do
+				for _,v in pairs(pg:GetDescendants()) do
 
-				if v.Name == "CursorImage"
-				or v.Name == "CursorImageDefault" then
+					if v.Name == "CursorImage"
+					or v.Name == "CursorImageDefault" then
 
-					if v:IsA("ImageLabel")
-					or v:IsA("ImageButton") then
+						if v:IsA("ImageLabel")
+						or v:IsA("ImageButton") then
 
-						v.Visible = false
-
+							v.Visible = false
+						end
 					end
-				end
 
-				local n = v.Name:lower()
+					local n = v.Name:lower()
 
-				if n:find("shift")
-				or n:find("mouselock") then
+					if n:find("shift")
+					or n:find("mouselock") then
 
-					if v:IsA("ImageLabel")
-					or v:IsA("ImageButton")
-					or v:IsA("TextButton") then
+						if v:IsA("ImageLabel")
+						or v:IsA("ImageButton")
+						or v:IsA("TextButton") then
 
-						v.Visible = false
-
+							v.Visible = false
+						end
 					end
 				end
 			end
-		end
-	end)
+		end)
+	end
+end)
+
+-- CURSOR UPDATE
+local spin = 0
+
+RunService.RenderStepped:Connect(function(dt)
 
 	if enabled and UIS.MouseBehavior == Enum.MouseBehavior.LockCenter then
 
@@ -365,14 +370,10 @@ RunService.RenderStepped:Connect(function(dt)
 		)
 
 		if spinEnabled then
-
 			spin += 120 * dt
 			cursor.Rotation = spin
-
 		else
-
 			cursor.Rotation = 0
-
 		end
 
 	else
@@ -408,7 +409,6 @@ close.MouseButton1Click:Connect(function()
 	UIS.MouseIconEnabled = true
 
 	gui:Destroy()
-	script:Destroy()
 
 end)
 
